@@ -1,23 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AutoShinTeh
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private Commission _calculator = new Commission();
@@ -35,34 +23,33 @@ namespace AutoShinTeh
                 new Seller { StoreId = 40140, FullName = "Янаева Э.С.", HireDate = new DateTime(2014, 12, 15) }
             };
 
-            UpdateDataGrid();
+        }
+
+        private int CalculateYearsOfWork(DateTime hireDate)
+        {
+            int years = 0;
+            if (HireDateDP.SelectedDate != null)
+                years = DateTime.Now.Year - HireDateDP.SelectedDate.Value.Year;
+
+            return years;
         }
 
         private void CalculateButton_Click(object sender, RoutedEventArgs e)
         {
-            string fullName = SellerNameTextBox.Text;
-            string hireDateText = HireDateTextBox.Text;
-            string dailyRevenueText = DailyRevenueTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(fullName))
-            {
-                MessageBox.Show("Введите фамилию продавца.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (!DateTime.TryParse(hireDateText, out DateTime hireDate))
+            string fullName = SellerNameTextBox.Text.Trim();
+            if (!DateTime.TryParse(HireDateDP.SelectedDate?.ToString(), out DateTime hireDate))
             {
                 MessageBox.Show("Введите корректную дату приема на работу.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (!decimal.TryParse(dailyRevenueText, out decimal dailyRevenue))
+            if (!decimal.TryParse(DailyRevenueTextBox.Text, out decimal dailyRevenue))
             {
-                MessageBox.Show("Введите корректную дневную выручку.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Введите корректную среднюю дневную выручку.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var seller = _sellers.FirstOrDefault(s => s.FullName == fullName && s.HireDate == hireDate);
+            var seller = _sellers.FirstOrDefault(s => s.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase) && s.HireDate == hireDate);
 
             if (seller == null)
             {
@@ -71,7 +58,7 @@ namespace AutoShinTeh
             }
 
             decimal commission = _calculator.CalculateCommission(dailyRevenue, seller.HireDate);
-            int yearsOfWork = _calculator.CalculateYearsOfWork(seller.HireDate);
+            int yearsOfWork = CalculateYearsOfWork(seller.HireDate);
 
             var newSellerData = new
             {
@@ -87,7 +74,7 @@ namespace AutoShinTeh
             dataGrid.ItemsSource = null;
             dataGrid.ItemsSource = currentData;
 
-            CommissionResultTextBlock.Text = $"Комиссионные продавца {fullName}: {commission.ToString("F2")} руб.";
+            CommissionResultTextBlock.Text = $"Комиссионные продавца {fullName}: {commission:F2} руб.";
         }
 
         private void UpdateDataGrid()
@@ -100,7 +87,7 @@ namespace AutoShinTeh
                     seller.FullName,
                     Commission = "",
                     DailyRevenue = dailyRevenue.ToString("F2"),
-                    YearsOfWork = _calculator.CalculateYearsOfWork(seller.HireDate)
+                    YearsOfWork = CalculateYearsOfWork(seller.HireDate)
                 };
             }).ToList();
 

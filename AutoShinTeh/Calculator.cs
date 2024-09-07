@@ -35,16 +35,5 @@ namespace AutoShinTeh
 
             return commission;
         }
-
-        public int CalculateYearsOfWork(DateTime hireDate)
-        {
-            int years = DateTime.Now.Year - hireDate.Year;
-            if (hireDate > DateTime.Now.AddYears(-years))
-            {
-                years--;
-            }
-
-            return years;
-        }
     }
 }

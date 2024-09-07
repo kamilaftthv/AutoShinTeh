@@ -29,7 +29,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,5">
                 <TextBlock Text="Введите дату приема продавца на работу" Margin="0,0,0,5" Width="260" HorizontalAlignment="Left"></TextBlock>
-                <TextBox x:Name="HireDateTextBox" Margin="0,0,0,10" Width="300" />
+                <DatePicker x:Name="HireDateDP" Margin="0,0,0,10" Width="300" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,5">
                 <TextBlock Text="Введите среднюю дневную выручку продавца" Margin="0,0,0,5" Width="260" HorizontalAlignment="Left"/>
